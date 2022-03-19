@@ -17,7 +17,7 @@ class RoverController extends Controller
         $xPosition = $request->xPosition;
         $yPosition = $request->yPosition;
         $initialOrientation = $request->orientation;
-        Switch($initialOrientation){
+        Switch(strtoupper($initialOrientation)){
             case 'N':
                 $orientation = 1;
                 break;
