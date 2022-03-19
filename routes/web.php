@@ -19,4 +19,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('rover', [RoverController::class, 'play']);
+Route::post('rover', [RoverController::class, 'play'])->name('play');
+
+Route::get('rover/form', [RoverController::class, 'form']);

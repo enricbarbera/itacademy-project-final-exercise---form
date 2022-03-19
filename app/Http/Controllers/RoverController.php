@@ -11,12 +11,12 @@ class RoverController extends Controller
         $dim_err = false;
         $pos_err = false;
         $data_err = false;
-        $json = $request->json()->all(); // ample(X), llarg(Y), x inicial, y inicial, orientació inicial, llista de moviments (ex. AAALAALAAARAALAAAARA)
+        // $json = $request->json()->all(); // ample(X), llarg(Y), x inicial, y inicial, orientació inicial, llista de moviments (ex. AAALAALAAARAALAAAARA)
         // dd($request);
         // dd($json);
-        $xPosition = $json['rover']['initialPosition']['x'];
-        $yPosition = $json['rover']['initialPosition']['y'];
-        $initialOrientation = $json['rover']['initialOrientation'];
+        $xPosition = $request->xPosition;
+        $yPosition = $request->yPosition;
+        $initialOrientation = $request->orientation;
         Switch($initialOrientation){
             case 'N':
                 $orientation = 1;
@@ -33,31 +33,34 @@ class RoverController extends Controller
             default:
                 $orientation = 0;
         }
-        $width = $json['square']['width'];
-        $height = $json['square']['height'];
-        // return "$xPosition, $yPosition, $orientation, $width, $height";
+        $width = $request->width;
+        $height = $request->height;
+        $movement = $request->movement;
+        // echo strlen($request->movement)."<br>";
+        // echo $request->movement[1]."<br>";
+        // return "$xPosition, $yPosition, $initialOrientation, $width, $height";
         if($width <= 0 || $height <= 0){
             echo 'Dimensions must be both greater than 0<br>';
             $dim_err = true;
         }
-        if(!$dim_err && ($xPosition < 0 || $xPosition >= $width-1 || $yPosition < 0 || $yPosition >= $height-1)){
+        if(!$dim_err && ($xPosition < 0 || $xPosition >= $width || $yPosition < 0 || $yPosition >= $height)){
             echo "Rover must be inside square ($width x $height) <br>";
             $pos_err = true;
         }
-        if(!$dim_err && !$pos_err && $orientation != '1' && $orientation != '2' && $orientation != '3' && $orientation != '4'){
+        if(!$dim_err && !$pos_err && ($orientation != '1' && $orientation != '2' && $orientation != '3' && $orientation != '4')){
             echo 'Orientation restricted to: N (North), E (East), S (South), W (West)<br>Rover did not move<br>';
             $data_err = true;
         }
-        foreach($json['movement'] as $movement){
+        for($i=0; $i<strlen($movement); $i++){
             if(!$in_bounds || $dim_err || $pos_err || $data_err){
                 break;
             }
-            if($movement!='A' && $movement!='R' && $movement!='L'){
+            if($movement[$i] != 'A' && $movement[$i] != 'R' && $movement[$i] != 'L'){
                 echo 'Movements restricted to: A (advance), R (turn right), L (turn left)<br>Rover did not move<br>';
                 $data_err = true;
                 break;
             }
-            switch($movement){
+            switch($movement[$i]){
                 case 'A':
                     if($orientation == 1 && $yPosition == $height-1 || $orientation == 2 && $xPosition == $width-1 || $orientation == 3 && $yPosition == 0 || $orientation == 4 && $xPosition == 0){
                         echo 'Rover went out of bounds from position  '.$xPosition.', '.$yPosition.'<br>';
@@ -111,9 +114,15 @@ class RoverController extends Controller
             }
             echo 'Final Rover position is: <br> X = '.$xPosition.'<br> Y = '.$yPosition.'<br> Orientation = '.$finalOrientation.'<br>';
             $arr=[$in_bounds, $xPosition, $yPosition, $finalOrientation];
-            return response()->json($arr);
+            // return $arr;
+            // return response()->json($arr);
         }elseif(!$data_err && !$dim_err && !$pos_err){
-            return response()->json($in_bounds);
+            // return $in_bounds;
+            // return response()->json($in_bounds);
         }
+    }
+
+    public function form(){
+        return view ('form');
     }
 }
