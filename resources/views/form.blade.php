@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rover</title>
+    <title>Rover Form</title>
 </head>
 <body>
     <form method="post", action="{{route('play')}}">
@@ -26,7 +26,12 @@
         </p>
         <p>
             Rover initial orientation (N, E, S, W):
-            <input type="text" name="orientation">
+            <select name="orientation">
+                <option value="N">North</option>
+                <option value="E">East</option>
+                <option value="S">South</option>
+                <option value="W">West</option>
+            </select>
         </p>
         <p>
             Movement sequence (A to advance, R to turn right, L to turn left, ex(AAALAALAAARARAAL)):

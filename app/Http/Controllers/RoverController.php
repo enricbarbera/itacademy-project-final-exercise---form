@@ -51,16 +51,18 @@ class RoverController extends Controller
             echo 'Orientation restricted to: N (North), E (East), S (South), W (West)<br>Rover did not move<br>';
             $data_err = true;
         }
+        $iniData=['width'=>$width, 'height'=>$height, 'xPosition'=>$xPosition, 'yPosition'=>$yPosition, 'orientation'=>strtoupper($initialOrientation)];
+        // dd($iniData);
         for($i=0; $i<strlen($movement); $i++){
             if(!$in_bounds || $dim_err || $pos_err || $data_err){
                 break;
             }
-            if($movement[$i] != 'A' && $movement[$i] != 'R' && $movement[$i] != 'L'){
+            if(strtoupper($movement[$i]) != 'A' && strtoupper($movement[$i]) != 'R' && strtoupper($movement[$i]) != 'L'){
                 echo 'Movements restricted to: A (advance), R (turn right), L (turn left)<br>Rover did not move<br>';
                 $data_err = true;
                 break;
             }
-            switch($movement[$i]){
+            switch(strtoupper($movement[$i])){
                 case 'A':
                     if($orientation == 1 && $yPosition == $height-1 || $orientation == 2 && $xPosition == $width-1 || $orientation == 3 && $yPosition == 0 || $orientation == 4 && $xPosition == 0){
                         echo 'Rover went out of bounds from position  '.$xPosition.', '.$yPosition.'<br>';
@@ -112,12 +114,16 @@ class RoverController extends Controller
                     $finalOrientation = 'W';
                     break;
             }
+            $endData=['width'=>$width, 'height'=>$height,'xPosition'=>$xPosition, 'yPosition'=>$yPosition, 'orientation'=>$finalOrientation];
+            // dd($endData);
+            // return view('result', compact('iniData', 'endData'));
             echo 'Final Rover position is: <br> X = '.$xPosition.'<br> Y = '.$yPosition.'<br> Orientation = '.$finalOrientation.'<br>';
-            $arr=[$in_bounds, $xPosition, $yPosition, $finalOrientation];
+            // return $endData;
+            // $arr=[$in_bounds, $xPosition, $yPosition, $finalOrientation];
             // return $arr;
             // return response()->json($arr);
         }elseif(!$data_err && !$dim_err && !$pos_err){
-            // return $in_bounds;
+            return $in_bounds;
             // return response()->json($in_bounds);
         }
     }
